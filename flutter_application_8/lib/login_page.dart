@@ -2,17 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'validators.dart';
 import 'auth_errorrs.dart';
+import 'register_page.dart'; // 👈 Import agregado
+
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
+
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailCtrl = TextEditingController();
   final _passwordCtrl = TextEditingController();
   bool _loading = false;
   String? _error;
+
   Future<void> _signIn() async {
     if (!_formKey.currentState!.validate()) return;
     FocusScope.of(context).unfocus();
@@ -32,6 +37,7 @@ class _LoginPageState extends State<LoginPage> {
       if (mounted) setState(() => _loading = false);
     }
   }
+
   Future<void> _resetPassword() async {
     final emailError = Validators.email(_emailCtrl.text);
     if (emailError != null) {
@@ -49,12 +55,14 @@ class _LoginPageState extends State<LoginPage> {
       setState(() => _error = mapAuthErrorToMessage(e));
     }
   }
+
   @override
   void dispose() {
     _emailCtrl.dispose();
     _passwordCtrl.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,8 +88,7 @@ class _LoginPageState extends State<LoginPage> {
                 TextFormField(
                   controller: _passwordCtrl,
                   decoration: const InputDecoration(
-                    
-labelText: 'Contraseña',
+                    labelText: 'Contraseña',
                     border: OutlineInputBorder(),
                   ),
                   obscureText: true,
@@ -89,9 +96,11 @@ labelText: 'Contraseña',
                 ),
                 const SizedBox(height: 12),
                 if (_error != null)
-                  Text(_error!,
-                      style: const TextStyle(color: Colors.red),
-                      textAlign: TextAlign.center),
+                  Text(
+                    _error!,
+                    style: const TextStyle(color: Colors.red),
+                    textAlign: TextAlign.center,
+                  ),
                 const SizedBox(height: 12),
                 SizedBox(
                   width: double.infinity,
@@ -110,6 +119,19 @@ labelText: 'Contraseña',
                   onPressed: _loading ? null : _resetPassword,
                   child: const Text('¿Olvidaste tu contraseña?'),
                 ),
+                // 👇 Nuevo botón de navegación a RegisterPage
+                TextButton(
+                  onPressed: _loading
+                      ? null
+                      : () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => const RegisterPage(),
+                            ),
+                          );
+                        },
+                  child: const Text('¿No tienes cuenta? Regístrate'),
+                ),
                 const SizedBox(height: 8),
                 const _SmallPrint(),
               ]),
@@ -120,8 +142,10 @@ labelText: 'Contraseña',
     );
   }
 }
+
 class _SmallPrint extends StatelessWidget {
   const _SmallPrint();
+
   @override
   Widget build(BuildContext context) {
     return const Text(
